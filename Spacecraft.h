@@ -1,7 +1,7 @@
 ALEX CHECK THIS 
 #define GL_SILENCE_DEPRECATION
-#ifndef Spaceship_H
-#define Spaceship_H
+#ifndef SPACECRAFT_H
+#define SPACECRAFT_H
 
 #include <cmath>
 #include <atomic>
@@ -21,4 +21,4 @@ public:
     void draw(float Xposition, float Yposition);
 };
 
-#endif // Spacecraft_H
+#endif // SPACECRAFT_H
