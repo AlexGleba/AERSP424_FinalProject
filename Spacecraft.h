@@ -1,4 +1,4 @@
-#pragma once
+ALEX CHECK THIS 
 #define GL_SILENCE_DEPRECATION
 #ifndef Spaceship_H
 #define Spaceship_H
