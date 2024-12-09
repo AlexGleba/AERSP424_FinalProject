@@ -6,12 +6,11 @@
 #define RIGHT_ARROW 39
 
 //Include OpenGL headers
-//Needed, but need to download first to use
 #include <openGL/gl.h>
 #include <GLUT/glut.h>
 
 
-//Include needed libraries
+//Include neccessary libraries
 #include <iostream>
 #include <vector>
 #include <thread>
