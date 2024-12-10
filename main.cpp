@@ -193,6 +193,9 @@ int main(int argc, char** argv)
     // Spawn the first asteroid
     spawnAsteroid();
 
+    // Initialize the game
+    Game.init();
+    
     // Start the GLUT main loop
     glutMainLoop();
 
