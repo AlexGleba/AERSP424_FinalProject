@@ -197,6 +197,7 @@ void Game::resetGame() {
     yincrements = 0;
     xincrementa = 0;
     yincrementa = 0; 
+    time_interval = 0;
 
     // Reset keys back to original state
     for (int i = 0; i < 256; i++){
