@@ -185,8 +185,27 @@ Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(fals
         }
     }
 
+void Game::init() {
+    // Reset all keys states to false so the game can start (256 for broad, generic range)
+    for (int i = 0; i < 256; i++) { keyStates[i] = false; }    
+}
 
-Game::Game(spacecraft& s, asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(0), yincrements(0), xincrementa(1.5), yincrementa(1.5), time_interval(0)
+
+void Game::resetGame() {
+    // start the game over by resetting over to false
+    over = false;
+
+    // reset increments back to original state
+    xincrements = 1.5;
+    yincrements = 0;
+    xincrementa = 0;
+    yincrementa = 0; 
+
+    // Reset keys back to original state
+    for (int i = 0; i < 256; i++){
+        keyStates[i] = false;
+    }
+
 
 void Game::keyOperations() 
 {
@@ -196,9 +215,9 @@ void Game::keyOperations()
     y_s = (1.5 + yincrements) * square_size;
 
 
-    if (keyStates[LEFT_ARROW]) { xIncrementg -= 1.5 ; }
+    if (keyStates[LEFT_ARROW]) { xincrements -= 1.5 ; }
     
-    if (keyStates[RIGHT_ARROW]) { xIncrementg += 1.5 ; }
+    if (keyStates[RIGHT_ARROW]) { xincrements += 1.5 ; }
         
 
     if (keyStates[' ']) {
