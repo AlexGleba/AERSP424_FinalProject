@@ -20,5 +20,6 @@ add_executable(Final_Project
     Asteroid.h
     Spacecraft.h
     Game.h
+    ErrorLog.h
     # Additional .cpp files can be included if needed
 )
