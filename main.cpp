@@ -10,6 +10,8 @@ ALEX CHECK THIS
 //Include OpenGL headers
 #include <openGL/gl.h>
 #include <GLUT/glut.h>
+#include <GL/gl.h>
+#include <GL/glut.h>
 
 
 //Include neccessary libraries
@@ -93,4 +95,87 @@ void Spacecraft::draw(float posX, float posY)
     glVertex2f(posX + bodyWidth * 0.5, posY - bodyHeight * 0.75); // Bottom left point of the fin
     glVertex2f(posX + bodyWidth * 0.75, posY - bodyHeight * 0.5); // Bottom right
     glEnd();
+}
+
+// Struct for the Asteroid 
+struct Asteroid 
+{
+    float x, y;     // Position of the asteroid
+    float size;     // Size of the asteroid
+    float speed;    // Speed at which the asteroid falls
+};
+
+
+// Global variable 
+std::vector<Asteroid> asteroids;
+// List of the asteroids 
+
+// Generate random number between given range
+float getRandomFloat(float min, float max) 
+{
+    return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
+}
+
+// Spawn new asteroid 
+void spawnAsteroid() 
+{
+    Asteroid newAsteroid;
+    newAsteroid.x = getRandomFloat(0, window_width);  // Asteroid falls starting from random X position
+    newAsteroid.y = window_height;                    // Start at the top of the screen
+    newAsteroid.size = getRandomFloat(10.0f, 30.0f);  // Asteroid has a random size
+    newAsteroid.speed = getRandomFloat(1.0f, 5.0f);   // Asteroid has a random fall speed
+    asteroids.push_back(newAsteroid);
+}
+
+void updateAsteroids(int value) 
+{
+    // Updating the positions of the asteroids
+    for (auto& asteroid : asteroids) 
+    {
+        asteroid.y -= asteroid.speed;  // Moving the asteroid down
+    }
+
+    // Removing asteroids that are off the screen
+    asteroids.erase(std::remove_if(asteroids.begin(), asteroids.end(),
+                                    [](const Asteroid& asteroid) {
+                                        return asteroid.y + asteroid.size < 0;  // Check if asteroid is out of screen
+                                    }),
+                    asteroids.end());
+    glutPostRedisplay(); // Redraw request
+    glutTimerFunc(20, updateAsteroids, 0);  // Call this function again after 20 ms
+}
+
+// Drawing the Asteroids 
+void renderAsteroids() 
+{
+    glClear(GL_COLOR_BUFFER_BIT);  // Clear the screen
+
+    // Render each asteroid
+    for (const auto& asteroid : asteroids) 
+    {
+        glPushMatrix();
+        glTranslatef(asteroid.x, asteroid.y, 0);  // Translate to asteroid's position
+        glBegin(GL_POLYGON);
+        for (int i = 0; i < 360; i += 30) 
+        {
+            float angle = i * M_PI / 180; // convert to radians
+            glVertex2f(cos(angle) * asteroid.size, sin(angle) * asteroid.size);  // Draw a circle for the Asteroid
+        }
+        glEnd();
+        glPopMatrix();
+    }
+
+    glutSwapBuffers();  // Swap the buffers to display the new frame
+}
+
+    glEnd();
+}
+
+int main()
+{
+
+
+
+
+    return 0;
 }
