@@ -145,6 +145,9 @@ void updateAsteroids(int value)
             return asteroid.y + asteroid.size < 0;  // Check if asteroid is out of screen
         }),
         asteroids.end());
+    // might delete but helps spawn new asteroids
+    if (rand() % 50 == 0) {  // Chance to spawn a new asteroid
+        spawnAsteroid();
     glutPostRedisplay(); // Redraw request
     glutTimerFunc(20, updateAsteroids, 0);  // Call this function again after 20 ms
 }
