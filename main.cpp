@@ -171,11 +171,30 @@ void renderAsteroids()
     glEnd();
 }
 
-int main()
+int main(int argc, char** argv)
 {
+    glutInit(&argc, argv);  // Initialize GLUT
+    glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB);  // Double buffering for smooth rendering
+    glutInitWindowSize(750, 750); // Set the window size
+    glutCreateWindow("Asteroids Destroyers"); // Create the window
 
+    // Set up OpenGL settings
+    glClearColor(0.0, 0.0, 0.0, 1.0); // Set background color (black)
+    glOrtho(0, window_width, 0, window_height, -1.0, 1.0); // Set 2D orthogonal projection
 
+    // Register the display function and handle input
+    glutDisplayFunc(display); // Display callback for rendering
+    glutKeyboardFunc(keyPressed); // Regular key press callback
+    glutSpecialFunc(specialKeyPressed); // Special key press callback
+    glutTimerFunc(16, update, 0);  // Start the update loop (60 FPS)
 
+    // Spawn the first asteroid
+    spawnAsteroid();
+
+    // Start the GLUT main loop
+    glutMainLoop();
 
     return 0;
+
 }
+
