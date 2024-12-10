@@ -179,6 +179,27 @@ Game::~Game() {
 }
 
 
+void Game::init() {
+    // Reset all keys states to false so the game can start (256 for broad, generic range)
+    for (int i = 0; i < 256; i++) { keyStates[i] = false; }    
+}
+
+
+void Game::resetGame() {
+    // start the game over by resetting over to false
+    over = false;
+
+    // reset increments back to original state
+    xincrements = 1.5;
+    yincrements = 0;
+    xincrementa = 0;
+    yincrementa = 0; 
+
+    // Reset keys back to original state
+    for (int i = 0; i < 256; i++){
+        keyStates[i] = false;
+    }
+
 
 int main(int argc, char** argv)
 {
