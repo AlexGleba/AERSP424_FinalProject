@@ -42,12 +42,12 @@ public:
     void keyPressed(unsigned char key, int x, int y);
     void keyUp(unsigned char key, int x, int y);
     void resetGame();
-    void keyOperations();
+    void keyoperations();
     void gameOver();
-    void resultsDisplay();
-    void welcomeScreen();
+    void resultsdisplay();
+    void InstructionScreen();
     void display();
-    void reshape(int w, int h);
+    void reshape(int w_resize, int h_resize);
     std::vector<bool> keyStates;
 };
 
