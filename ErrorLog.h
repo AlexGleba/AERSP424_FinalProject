@@ -59,14 +59,14 @@ private:
     // format: YYYY-MM-DD HH:MM:SS
     std::string getCurrentTime() 
 {
-        time_t rawTime;
-        struct tm* timeInfo;
+        time_t Time;
+        struct tm* time_info;
         char buffer[80];
 
-        time(&rawTime);
-        timeInfo = localtime(&rawTime);
+        time(&Time);
+        time_info = localtime(Time);
 
-        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", timeInfo);
+        strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", time_info);
         return std::string(buffer);
     }
 };
