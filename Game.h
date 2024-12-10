@@ -42,10 +42,10 @@ public:
     void keyPressed(unsigned char key, int x, int y);
     void keyUp(unsigned char key, int x, int y);
     void resetGame();
-    void keyoperations();
-    void gameOver();
+    void keyOperations();
+    void gameover();
     void resultsdisplay();
-    void InstructionScreen();
+    void Instructionscreen();
     void display();
     void reshape(int w_resize, int h_resize);
     std::vector<bool> keyStates;
