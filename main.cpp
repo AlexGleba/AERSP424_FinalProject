@@ -2,8 +2,6 @@ ALEX CHECK THIS
 
 //Include Header Files
 #include "Spaceship.h"
-#include "Asteroid.h"
-#include "ErrorLog.h"
 
 //Define arrow key codes
 #define LEFT_ARROW 37
@@ -25,9 +23,6 @@ ALEX CHECK THIS
 #include <cmath>
 
 using namespace std;
-
-//////// PUT IN OTHER CPP BUT JUST TO SEE IF IT RUNS/////////////
-static float square_size = 50.0; //size of one square on the game
 
 
 // Create classes in order to run the game
@@ -173,6 +168,18 @@ void renderAsteroids()
     glEnd();
 }
 
+// Game 
+Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0) { 
+
+// Destructor for the game
+Game::~Game() {
+    for (auto DrawObjects : drawobjects) {
+        delete drawobjects;
+    }
+}
+
+
+
 int main(int argc, char** argv)
 {
     glutInit(&argc, argv);  // Initialize GLUT
@@ -193,9 +200,6 @@ int main(int argc, char** argv)
     // Spawn the first asteroid
     spawnAsteroid();
 
-    // Initialize the game
-    Game.init();
-    
     // Start the GLUT main loop
     glutMainLoop();
 
