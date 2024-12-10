@@ -2,6 +2,9 @@ ALEX CHECK THIS
 
 //Include Header Files
 #include "Spaceship.h"
+#include "Asteroid.h"
+#include "ErrorLog.h"
+#include "Game.h"
 
 //Define arrow key codes
 #define LEFT_ARROW 37
