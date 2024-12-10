@@ -29,10 +29,10 @@ private:
     std::vector<DrawObjects*> drawobjects;
     bool moveLeft;
     bool moveRight;
-    float x_spacecraft;
-    float y_spacecraft;
-    float x_asteroid;
-    float y_asteroid;
+    float x_s;
+    float y_s;
+    float x_a;
+    float y_a;
     // std::vector<float> asteroid positions; (not sure if needed)
 
 public:
