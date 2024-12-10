@@ -25,7 +25,7 @@ private:
     float xincrementa;
     float yincrementa;
    
-
+    int time_interval;
     std::vector<DrawObjects*> drawobjects;
     bool moveLeft;
     bool moveRight;
