@@ -205,7 +205,7 @@ void Game::resetGame() {
     for (int i = 0; i < 256; i++){
         keyStates[i] = false;
     }
-
+}
 
 void Game::keyOperations() 
 {
