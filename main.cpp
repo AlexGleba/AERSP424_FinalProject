@@ -320,7 +320,7 @@ void Game::resultsdisplay()
 }
 
 // welcome screen messages
-void Game::welcomeScreen() {
+void Game::Instructionscreen() {
     glClearColor(0, 1.0, 1.0, 1.0);  // make the screen a cyan color
     glClear(GL_COLOR_BUFFER_BIT);
 
@@ -362,6 +362,49 @@ void Game::welcomeScreen() {
     glFlush();
 }
 
+void Game::display() {
+    // if the game starts with 1 second, set over to false
+    if (this->time_interval ==1) { this->over = false; }
+    
+    this->keyOperations();
+    glClear(GL_COLOR_BUFFER_BIT);
+    this->gameover();
+
+    // If the player is replaying then draw the asteroid and spacecraft again
+    if (this->replay) {
+        if (!this->over) {
+
+            this->spacecraft.draw(1.5 + this->xincrements, 1.5 + this->yincrements);
+            this->asteroid.draw(1.5 + this->xincrementa, 1.5 + this->yincrementa);
+
+        } else {
+            this->resultsdisplay();
+        }
+    } else {
+        this->Instructionscreen();
+    }
+    glutSwapBuffers();
+}
+
+// Method to reshape the game if the screen size changes
+void Game::reshape(int w_resize, int h_resize) {
+
+     // Switch to the projection matrix mode
+    glMatrixMode(GL_PROJECTION);
+    
+    // Reset the projection matrix to the identity matrix
+    glLoadIdentity();
+    
+    // Set the viewport to match the new window size
+    glViewport(0, 0, (GLsizei)w_resize, (GLsizei)h_resize);
+    
+    // Define the orthographic projection matrix with new window dimensions
+    glOrtho(0, 750, 750, 0, -1.0, 1.0);
+    
+    // Switch back to the modelview matrix mode
+    glMatrixMode(GL_MODELVIEW);
+
+}
 
 
     int main(int argc, char** argv)
