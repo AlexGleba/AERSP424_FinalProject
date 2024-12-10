@@ -319,6 +319,48 @@ void Game::resultsdisplay()
     glFlush();
 }
 
+// welcome screen messages
+void Game::welcomeScreen() {
+    glClearColor(0, 1.0, 1.0, 1.0);  // make the screen a cyan color
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    // Set text color to white
+    glColor3f(1.0, 1.0, 1.0); 
+
+    // Title Section
+    const char* title = "*************************************";
+    glRasterPos2f(150, 500);
+    while (*title)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+
+    title = "Asteroid Avoider";
+    glRasterPos2f(240, 550);
+    while (*title)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+
+    title = "*************************************";
+    glRasterPos2f(150, 600);
+    while (*title)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+
+    // Instruction Text Section
+    title = "To move the spacecraft use the right and left arrow keys";
+    glRasterPos2f(150, 450);
+    while (*title)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+
+    title = "Press the space key to begin!";
+    glRasterPos2f(200, 400);
+    while (*title)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+
+    title = "To reset the game, press the R key.";
+    glRasterPos2f(200, 350);
+    while (*title)
+        glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+
+    glFlush();
+}
 
 
 
