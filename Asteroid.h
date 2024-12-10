@@ -14,7 +14,7 @@ class Asteroid
 private:
     std::atomic<float> positionX_asteroid;
     std::atomic<float> positionY_asteroid;
-    static constexpr float squareSize = 50.0;
+    static constexpr float square_size = 50.0;
     float Xa_position;
     float Ya_position;
 
