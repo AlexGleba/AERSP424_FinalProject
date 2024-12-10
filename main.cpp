@@ -247,12 +247,12 @@ void Game::gameover()
     cout << x_s << ','<< y_s << ','  << x_a << ',' << y_a << endl;
 
     int number_x = x_a; // Check this number
-    int lowerbound_x = x_s - (bodyWidth+finWidth); // Lower bound of x range
-    int upperbound_x = x_s + (bodyWidth+finWidth); // Upper bound of x range
+    int lowerbound_x = x_s - (0.5*(bodyWidth+finWidth)); // Lower bound of x range
+    int upperbound_x = x_s + (0.5*(bodyWidth+finWidth)); // Upper bound of x range
 
     int number_y; // Check this number
-    int lowerbound_y = y_s - (bodyHeigh+finHeight); // Lower bound of y range
-    int upperbound_y = y_s + (bodyHeigh+finHeight); // Upper bound of y range
+    int lowerbound_y = y_s - (0.5*(bodyHeigh+finHeight)); // Lower bound of y range
+    int upperbound_y = y_s + (0.5*(bodyHeigh+finHeight)); // Upper bound of y range
 
     if (number_x >= lowerbound_x && number_x <= upperbound_x) 
     {
