@@ -186,6 +186,141 @@ Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(fals
     }
 
 
+Game::Game(spacecraft& s, asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(0), yincrements(0), xincrementa(1.5), yincrementa(1.5), time_interval(0)
+
+void Game::keyOperations() 
+{
+    // Update Spacecraft's movement according to keys pressed
+    
+    x_s = (1.5 + xincrements) * square_size;
+    y_s = (1.5 + yincrements) * square_size;
+
+
+    if (keyStates[LEFT_ARROW]) { xIncrementg -= 1.5 ; }
+    
+    if (keyStates[RIGHT_ARROW]) { xIncrementg += 1.5 ; }
+        
+
+    if (keyStates[' ']) {
+        // Reset the game if desiring to replay and the game is over
+        if (!replay && over) 
+        {
+            resetGame();
+            replay = true;
+        }
+        else if (replay && over) 
+        {
+            replay = false;
+        }
+    }
+
+    // Reset the game when r is pressed
+    if (keyStates['r']) 
+    {
+            resetGame();
+            replay = true;
+    }
+}
+
+// Method to check if the game is over
+void Game::gameover() 
+{
+    cout << x_s << ','<< y_s << ','  << x_a << ',' << y_a << endl;
+
+    int number_x = x_a; // Check this number
+    int lowerbound_x = x_s - (bodyWidth+finWidth); // Lower bound of x range
+    int upperbound_x = x_s + (bodyWidth+finWidth); // Upper bound of x range
+
+    int number_y; // Check this number
+    int lowerbound_y = y_s - (bodyHeigh+finHeight); // Lower bound of y range
+    int upperbound_y = y_s + (bodyHeigh+finHeight); // Upper bound of y range
+
+    if (number_x >= lowerbound_x && number_x <= upperbound_x) 
+    {
+        if (number_y >= lowerbound_y && number_y <= upperbound_y)
+        {
+            cout << "Game Over: Number is between the bounds." << endl;
+            over = true;
+            return;
+        }
+    } 
+    else
+    {
+    cout << "Game continues: Number outside the bounds." << endl;
+    }
+
+    if(time_interval == 60) // Allow game to go on for a minute
+    {
+        over = true;
+        return;
+    }
+
+}
+
+// Display the results of the game at the end
+void Game::resultsdisplay() 
+{
+    // Clear the screen by showing a black screen
+    glClearColor(0, 0, 0, 1.0);
+    glClear(GL_COLOR_BUFFER_BIT);
+    
+    if (time_interval == 60) 
+    {
+        // Display Message when the Game is Won
+        const char* title = "*************************************";
+        glRasterPos2f(170, 250);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        title = "CONGRATULATIONS YOU WON SPACECRAFT! ";
+        glColor3f(1, 1, 1);
+        glRasterPos2f(150, 300);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        title = "*************************************";
+        glRasterPos2f(170, 350);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        title = "In order to restart the game, press the letter r on the keyboard.";
+        glRasterPos2f(170, 550);
+        while (*statement)
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
+    } 
+    else 
+    {
+        // Display Message when the Game is Lost
+        const char* title = "*************************";
+        glRasterPos2f(230, 250);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        title = "SORRY, YOU LOST THE GAME SPACECRAFT";
+        glColor3f(1, 1, 1);
+        glRasterPos2f(210, 300);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        title = "*************************";
+        glRasterPos2f(230, 350);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
+        
+        title = "In order to restart the game, press the letter r on the keyboard.";
+        glRasterPos2f(170, 550);
+        while (*title)
+            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
+    }
+    
+    glFlush();
+}
+
+
+
 
     int main(int argc, char** argv)
     {
