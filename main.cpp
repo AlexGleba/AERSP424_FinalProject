@@ -172,7 +172,7 @@ void renderAsteroids()
 }
 
 // Game 
-Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0) { 
+Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0), time_interval(0) { 
 
 // Destructor for the game
 Game::~Game() {
