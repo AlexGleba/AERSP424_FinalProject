@@ -13,7 +13,7 @@ class Spacecraft
 private:
     std::atomic<float> positionX;
     std::atomic<float> positionY;
-    static constexpr float squareSize = 50.0;
+    static constexpr float square_size = 50.0;
 
 public:
     // Spacecraft constructor set to initial position
