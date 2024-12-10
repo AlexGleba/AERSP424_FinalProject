@@ -319,7 +319,7 @@ void Game::resultsdisplay()
     glFlush();
 }
 
-// welcome screen messages
+// instructions screen messages
 void Game::Instructionscreen() {
     glClearColor(0, 1.0, 1.0, 1.0);  // make the screen a cyan color
     glClear(GL_COLOR_BUFFER_BIT);
