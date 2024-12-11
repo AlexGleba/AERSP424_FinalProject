@@ -27,7 +27,7 @@ public:
         }
     }
 
-    // Writse an error message to the log file
+    // Writes an error message to the log file
     void WriteError(const std::string& errorMessage) 
 {
         if (logFile.is_open()) 
@@ -64,7 +64,7 @@ private:
         char buffer[80];
 
         time(&Time);
-        time_info = localtime(Time);
+        time_info = localtime(&Time);
 
         strftime(buffer, sizeof(buffer), "%Y-%m-%d %H:%M:%S", time_info);
         return std::string(buffer);

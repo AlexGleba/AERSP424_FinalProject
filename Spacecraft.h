@@ -1,12 +1,14 @@
-ALEX CHECK THIS 
+//ALEX CHECK THIS 
 
 #ifndef SPACECRAFT_H
 #define SPACECRAFT_H
 
 #include <cmath>
 #include <atomic>
-#include <OpenGL/gl.h>
-#include <GLUT/glut.h>
+#include <windows.h>
+#include <GL/glew.h>
+#include <GLFW/glfw3.h>
+#include <GL/glut.h>
 
 class Spacecraft 
 {
