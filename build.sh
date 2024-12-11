@@ -47,6 +47,10 @@ rm -rf "${project_root_dir}/install"
 echo "make a new BUILD directory to start the compiling process"
 mkdir -p "${project_root_dir}/build"
 cd "${project_root_dir}/build"
+mkdir -p Debug
+cp -r "${project_root_dir}/third_party/freeglut/bin/x64/freeglut.dll" "${project_root_dir}/build/Debug"
+cp -r "${project_root_dir}/third_party/glew/install/bin/glew32d.dll" "${project_root_dir}/build/Debug"
+
 
 echo "cmake engage!"
 cmake -DCMAKE_EXPORT_COMPILE_COMMANDS=1 ..
@@ -63,4 +67,4 @@ echo "  the 2>&1 redirects the stderr to a 1 so we don't see the gnuplot problem
 #mkdir -p ${project_root_dir}/results
 #./build/main -c config.inp > results/results.txt 2>&1
 #./build/main
-
+./build/Debug/FinalProject
