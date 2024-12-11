@@ -1,4 +1,4 @@
-// ALEX CHECK THIS
+
 //  Won't accept PI without this
 #define _USE_MATH_DEFINES
 
@@ -12,8 +12,6 @@
 // Define arrow key codes
 
 // Include OpenGL headers
-// #include <openGL/gl.h>
-// #include <GLUT/glut.h>
 #include <windows.h>
 #include <GL/glew.h>
 #include <GLFW/glfw3.h>
@@ -27,12 +25,14 @@
 #include <memory>
 #include <cmath>
 
+#define LEFT_ARROW 37
+#define RIGHT_ARROW 39
+
 using namespace std;
 
 // Create classes in order to run the game
-// Requirements: Draw the Spacecraft, Asteroids, and lasers
+// Requirements: Draw the Spacecraft, Asteroids
 
-// update the spaceship, draw asteroids, update asteroids, draw lasers, update lasers, and detect collisions between lasers and asteroids.
 const int window_width = 750;
 const int window_height = 750;
 
@@ -79,7 +79,6 @@ void Spacecraft::draw(float posX, float posY)
     }
     glEnd();
 
-    // DON"T KNOW WHERE TO PLACE THIS /////////////////////////////////
     // Set Spacecraft color to white (RGB: 1.0, 1.0, 0.0)
     // All the colors are set to their maximum value 1 to be fully on
     glColor3f(1.0, 1.0, 1.0);
@@ -168,12 +167,12 @@ void renderAsteroids()
 }
 
 // Game
-Game::Game() : replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
+Game::Game(): replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
 {
     // set spacecraft
     // add asteroid
-    // no arguments
 }
+
 // Destructor for the game
 Game::~Game()
 {
@@ -252,13 +251,13 @@ void Game::keyOperations()
 // Method to check if the game is over
 void Game::gameover()
 {
+    cout << x_s << ',' << y_s << ',' << x_a << ',' << y_a << endl;
     static constexpr float square_size = 50.0;
     float bodyWidth = 40 * square_size;    // Width of the spacecraft body
     float bodyHeight = 20.0 * square_size; // Height of the spacecraft body
     float finWidth = 6.0 * square_size;    // Width of the fins
     float finHeight = 10.0 * square_size;  // Height of the fins
 
-    cout << x_s << ',' << y_s << ',' << x_a << ',' << y_a << endl;
 
     int number_x = x_a;                              // Check this number
     int lowerbound_x = x_s - (bodyWidth + finWidth); // Lower bound of x range
@@ -317,7 +316,7 @@ void Game::resultsdisplay()
 
         title = "In order to restart the game, press the letter r on the keyboard.";
         glRasterPos2f(170, 550);
-        while (*statement)
+        while (*title)
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
     }
     else
@@ -377,7 +376,7 @@ void Game::Instructionscreen()
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
     // Instruction Text Section
-    title = "To move the spacecraft use the right and left arrow keys";
+    title = "To move the spacecraft, use the left and right arrow keys";
     glRasterPos2f(150, 450);
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
@@ -387,7 +386,7 @@ void Game::Instructionscreen()
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
-    title = "To reset the game, press the R key.";
+    title = "To reset the game, press the r key.";
     glRasterPos2f(200, 350);
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
@@ -448,6 +447,20 @@ void Game::reshape(int w_resize, int h_resize)
     glMatrixMode(GL_MODELVIEW);
 }
 
+// unique pointer for Spacecraft object
+std::unique_ptr<Spacecraft> spacecraftPtr(new Spacecraft);
+
+Game games(*spacecraftPtr);
+
+void displaycallback() {games.display();}
+void reshapecallback(int width, int height) {games.reshape(width,height);}
+
+void keypressedcallback(unsigned char key, int x, int y)
+{
+    std::cout << "Pressed key: " << static_cast<int>(key) << std::endl;
+    games.keyStates[key] = true;
+}
+
 void keyUpCallback(unsigned char key, int x, int y) { Game::getGame()->keyStates[key] = false; }
 void specialKeyPressedCallback(int key, int x, int y)
 {
@@ -463,27 +476,54 @@ void specialKeyPressedCallback(int key, int x, int y)
     }
 }
 
+void specialkeyupcallback(int key, int x, int y)
+{
+    switch(key)
+    {
+        case GLUT_KEY_LEFT:
+        Game::getGame()->keyStates[LEFT_ARROW] = false;
+        break;
+
+    case GLUT_KEY_RIGHT:
+        Game::getGame()->keyStates[RIGHT_ARROW] = false;
+        break;
+    }
+}
+
 int main(int argc, char **argv)
 {
     glutInit(&argc, argv);                       // Initialize GLUT
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); // Double buffering for smooth rendering
     glutInitWindowSize(750, 750);                // Set the window size
-    glutCreateWindow("Asteroids Destroyers");    // Create the window
+    glutCreateWindow("Asteroids Avoiders");    // Create the window
 
     // Set up OpenGL settings
     glClearColor(0.0, 0.0, 0.0, 1.0);                      // Set background color (black)
     glOrtho(0, window_width, 0, window_height, -1.0, 1.0); // Set 2D orthogonal projection
 
     // Register the display function and handle input
-    glutDisplayFunc(display);           // Display callback for rendering
-    glutKeyboardFunc(keyPressed);       // Regular key press callback
-    glutSpecialFunc(specialKeyPressed); // Special key press callback
-    glutTimerFunc(16, update, 0);       // Start the update loop (60 FPS)
+    
+    //glutDisplayFunc(display);           // Display callback for rendering
+    //glutKeyboardFunc(keyPressed);       // Regular key press callback
+    //glutSpecialFunc(specialkeypressed); // Special key press callback
+    //glutTimerFunc(16, update, 0);       // Start the update loop (60 FPS)
+    
+     // Set GLUT callbacks
+     
+    glutKeyboardFunc(keypressedcallback);
+    glutKeyboardUpFunc(keyUpCallback);
+    glutDisplayFunc(displaycallback);
+    glutReshapeFunc(reshapecallback);
+    glutIdleFunc(displaycallback);
+    glutSpecialFunc(specialKeyPressedCallback);
+    glutSpecialUpFunc(specialkeyupcallback);
 
     // Spawn the first asteroid
     spawnAsteroid();
 
-    // Start the GLUT main loop
+    // Initialize game
+    games.init(); 
+    // Enter the GLUT main loop
     glutMainLoop();
 
     return 0;
