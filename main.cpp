@@ -149,6 +149,7 @@ void renderAsteroids()
     // Render each asteroid
     for (const auto &asteroid : asteroids)
     {
+        //asteroid.draw();
         glPushMatrix();
         glTranslatef(asteroid.x, asteroid.y, 0); // Translate to asteroid's position
         glBegin(GL_POLYGON);
@@ -167,11 +168,14 @@ void renderAsteroids()
 }
 
 // Game
-Game::Game(): replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
+Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
 {
     // set spacecraft
     // add asteroid
 }
+// Change Game constructor to accept unique_ptr
+
+
 
 // Destructor for the game
 Game::~Game()
@@ -180,11 +184,12 @@ Game::~Game()
     {
         delete drawobject;
     }
-}
+};
 
 void Game::init()
 {
     // Reset all keys states to false so the game can start (256 for broad, generic range)
+    keyStates.resize(256, false);
     for (int i = 0; i < 256; i++)
     {
         keyStates[i] = false;
@@ -449,29 +454,34 @@ void Game::reshape(int w_resize, int h_resize)
 
 // unique pointer for Spacecraft object
 std::unique_ptr<Spacecraft> spacecraftPtr(new Spacecraft);
+std::unique_ptr<Spacecraft> asteroidPtr(new Asteroid);
 
-Game games(*spacecraftPtr);
+Game game(*spacecraftPtr,*asteroidPtr);
 
-void displaycallback() {games.display();}
-void reshapecallback(int width, int height) {games.reshape(width,height);}
+
+void displaycallback() {game.display();}
+void reshapecallback(int width, int height) {game.reshape(width,height);}
 
 void keypressedcallback(unsigned char key, int x, int y)
 {
     std::cout << "Pressed key: " << static_cast<int>(key) << std::endl;
-    games.keyStates[key] = true;
+    game.keyStates[key] = true;
 }
 
-void keyUpCallback(unsigned char key, int x, int y) { Game::getGame()->keyStates[key] = false; }
+void keyUpCallback(unsigned char key, int x, int y) { game.keyStates[key] = false; }
+//{ Game::getGame()->keyStates[key] = false; }
 void specialKeyPressedCallback(int key, int x, int y)
 {
     switch (key)
     {
     case GLUT_KEY_LEFT:
-        Game::getGame()->keyStates[LEFT_ARROW] = true;
+        //Game::getGame()->keyStates[LEFT_ARROW] = true;
+        game.keyStates[LEFT_ARROW] = true;
         break;
 
     case GLUT_KEY_RIGHT:
-        Game::getGame()->keyStates[RIGHT_ARROW] = true;
+        //Game::getGame()->keyStates[RIGHT_ARROW] = true;
+        game.keyStates[RIGHT_ARROW] = true;
         break;
     }
 }
@@ -481,11 +491,13 @@ void specialkeyupcallback(int key, int x, int y)
     switch(key)
     {
         case GLUT_KEY_LEFT:
-        Game::getGame()->keyStates[LEFT_ARROW] = false;
+        //Game::getGame()->keyStates[LEFT_ARROW] = false;
+        game.keyStates[LEFT_ARROW] = false;
         break;
 
     case GLUT_KEY_RIGHT:
-        Game::getGame()->keyStates[RIGHT_ARROW] = false;
+         game.keyStates[RIGHT_ARROW] = false;
+        //Game::getGame()->keyStates[RIGHT_ARROW] = false;
         break;
     }
 }
@@ -522,7 +534,7 @@ int main(int argc, char **argv)
     spawnAsteroid();
 
     // Initialize game
-    games.init(); 
+    game.init(); 
     // Enter the GLUT main loop
     glutMainLoop();
 
