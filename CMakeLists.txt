@@ -1,18 +1,19 @@
+# FINAL PROJECT CMakeList
+ 
 cmake_minimum_required(VERSION 3.22) # Specify CMake version.
+
 project(FinalProject
-   ) # A project name. This can be anything.
+   )     # Define project name
 
 set(CMAKE_CXX_STANDARD 17) # Specify C++ version.
-set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS}")
+set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")  
 message(STATUS "CMakeLists.txt is at ${PROJECT_SOURCE_DIR}") # To print something.
 
-#include(CTest)
-#enable_testing()
 
-# Dependencies
+# Dependencies - get openGL ready for use
 find_package(OpenGL REQUIRED)
 
-# Specify the paths for third-party libraries (GLEW, GLFW, Matplot++)
+# Specify the paths for third-party libraries (GLEW, GLFW)
 list(APPEND CMAKE_PREFIX_PATH "${PROJECT_SOURCE_DIR}/third_party/glew/install")
 find_package(GLEW REQUIRED)
 
@@ -38,12 +39,8 @@ set(SOURCE_FILES
     ${PROJECT_SOURCE_DIR}/src/main.cpp  # Main entry point of the project
 )
 
-# Add other source files if needed, for example:
-# list(APPEND SOURCE_FILES ${PROJECT_SOURCE_DIR}/src/other_source_file.cpp)
 
-# Create a binary file. 
-# The first argument is the name of the binary file.
-# The second argument is thshe source files (main.cpp).
+# include all of the source files (the first argument is the project name)
  add_executable(FinalProject 
  main.cpp
 Asteroid.h
@@ -53,9 +50,12 @@ ErrorLog.h
 )
 
 
-# Link libraries (OpenGL, GLEW, GLFW, Matplot++)
-target_link_libraries(${CMAKE_PROJECT_NAME} OpenGL::GL glfw libglew_static)
+# Link libraries (OpenGL, GLEW, GLFW)
+target_link_libraries(${CMAKE_PROJECT_NAME} OpenGL::GL glfw)
 
 target_link_libraries(${CMAKE_PROJECT_NAME} ${GLEW_STATIC_LIBRARIES})
 
-target_link_libraries(${CMAKE_PROJECT_NAME} "${PROJECT_SOURCE_DIR}/third_party/freeglut/lib/freeglut.lib")
+target_link_libraries(${CMAKE_PROJECT_NAME} "${PROJECT_SOURCE_DIR}/third_party/freeglut/lib/x64/freeglut.lib")
+
+target_link_libraries(${CMAKE_PROJECT_NAME} "${PROJECT_SOURCE_DIR}/third_party/glew/install/lib/libglew32d.lib")
+target_link_libraries(${CMAKE_PROJECT_NAME} "${PROJECT_SOURCE_DIR}/third_party/glew/install/lib/glew32d.lib")
