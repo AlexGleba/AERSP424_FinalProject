@@ -5,7 +5,7 @@
 // Include Header Files
 #include "Spacecraft.h"
 #include "Asteroid.h"
-#include "Game.h"
+#include "game.h"
 #include "ErrorLog.h"
 // #include "CMakeLists.txt"
 
@@ -24,9 +24,12 @@
 #include <string>
 #include <memory>
 #include <cmath>
+#include <chrono>
 
 #define LEFT_ARROW 37
 #define RIGHT_ARROW 39
+#define UP_ARROW 41
+#define DOWN_ARROW 43
 
 using namespace std;
 
@@ -48,15 +51,20 @@ public:
 };
 
 // ** SPACECRAFT **
+void Spacecraft::draw()
+{
+    draw(positionX, positionY);
+}
 void Spacecraft::draw(float posX, float posY)
 {
     // Draw the Spacecraft
-    float bodyWidth = 40 * square_size;    // Width of the spacecraft body
-    float bodyHeight = 20.0 * square_size; // Height of the spacecraft body
-    float finWidth = 6.0 * square_size;    // Width of the fins
-    float finHeight = 10.0 * square_size;  // Height of the fins
+    float bodyWidth = 4 * square_size;    // Width of the spacecraft body
+    float bodyHeight = 12.0 * square_size; // Height of the spacecraft body
+    float finWidth = 8.0 * square_size;   // Width of the fins
+    float finHeight = 4.0 * square_size;  // Height of the fins
 
     // Draw main body of Spacecraft through use of ellipse
+    glColor3f(1.0, 0.0, 0.0);
     glBegin(GL_POLYGON); // Begin drawing the body as a polygon
     for (int i = 0; i < 360; i++)
     {
@@ -68,14 +76,16 @@ void Spacecraft::draw(float posX, float posY)
     glEnd();
 
     // Draw cockpit as small circle at the top of the Spacecraft
-    float cockpitradius = 5.0 * square_size;
+    float axis1 = 1.0 * square_size;
+    float axis2 = 2.0*  square_size;
+    glColor3f(1.0,1.0,1.0);
     glBegin(GL_POLYGON); // Begin drawing the cockpit
     for (int i = 0; i < 360; i++)
     {
         float angle = i * M_PI / 180.0; // convert to radians
-        float x = cockpitradius * cos(angle);
-        float y = cockpitradius * sin(angle);
-        glVertex2f(x + posX, y + posY + bodyHeight * 0.25); // Position it on top of the Spacecraft
+        float x = axis1 * cos(angle);
+        float y = axis2 * sin(angle);
+        glVertex2f(x + posX, y + posY + bodyHeight * 0.3); // Position it on top of the Spacecraft
     }
     glEnd();
 
@@ -97,85 +107,30 @@ void Spacecraft::draw(float posX, float posY)
     glEnd();
 }
 
-// Global variable
-std::vector<Asteroid> asteroids;
-// List of the asteroids
-
-// Generate random number between given range
-float getRandomFloat(float min, float max)
-{
-    return min + static_cast<float>(rand()) / (static_cast<float>(RAND_MAX / (max - min)));
-}
-
-// Spawn new asteroid
-void spawnAsteroid()
-{
-    Asteroid newAsteroid;
-    newAsteroid.x = getRandomFloat(0, window_width); // Asteroid falls starting from random X position
-    newAsteroid.y = window_height;                   // Start at the top of the screen
-    newAsteroid.size = getRandomFloat(10.0f, 30.0f); // Asteroid has a random size
-    newAsteroid.speed = getRandomFloat(1.0f, 5.0f);  // Asteroid has a random fall speed
-    asteroids.push_back(newAsteroid);
-}
-
-void updateAsteroids(int value)
-{
-    // Updating the positions of the asteroids
-    for (auto &asteroid : asteroids)
-    {
-        asteroid.y -= asteroid.speed; // Moving the asteroid down
-    }
-
-    // Removing asteroids that are off the screen
-    asteroids.erase(std::remove_if(asteroids.begin(), asteroids.end(),
-                                   [](const Asteroid &asteroid)
-                                   {
-                                       return asteroid.y + asteroid.size < 0; // Check if asteroid is out of screen
-                                   }),
-                    asteroids.end());
-    // might delete but helps spawn new asteroids
-    if (rand() % 50 == 0)
-    { // Chance to spawn a new asteroid
-        spawnAsteroid();
-        glutPostRedisplay();                   // Redraw request
-        glutTimerFunc(20, updateAsteroids, 0); // Call this function again after 20 ms
-    }
-}
-// Drawing the Asteroids
-void renderAsteroids()
-{
-    glClear(GL_COLOR_BUFFER_BIT); // Clear the screen
-
-    // Render each asteroid
-    for (const auto &asteroid : asteroids)
-    {
-        //asteroid.draw();
-        glPushMatrix();
-        glTranslatef(asteroid.x, asteroid.y, 0); // Translate to asteroid's position
-        glBegin(GL_POLYGON);
-        for (int i = 0; i < 360; i += 30)
-        {
-            float angle = i * M_PI / 180;                                       // convert to radians
-            glVertex2f(cos(angle) * asteroid.size, sin(angle) * asteroid.size); // Draw a circle for the Asteroid
-        }
-        glEnd();
-        glPopMatrix();
-    }
-
-    glutSwapBuffers(); // Swap the buffers to display the new frame
-
-    glEnd();
-}
-
 // Game
-Game::Game(Spacecraft& s, Asteroid& a) : spacecraft(s), asteroid(a), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
+Game::Game(Spacecraft &s) : spacecraft(s), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
 {
     // set spacecraft
     // add asteroid
+    keyStates.resize(256);
+
+    bitmap1 = {{1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 1},
+               {1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1}};
 }
 // Change Game constructor to accept unique_ptr
-
-
 
 // Destructor for the game
 Game::~Game()
@@ -224,11 +179,23 @@ void Game::keyOperations()
     if (keyStates[LEFT_ARROW])
     {
         xincrements -= 1.5;
+        this->spacecraft.moveLaterally(-1);
     }
 
     if (keyStates[RIGHT_ARROW])
     {
         xincrements += 1.5;
+        this->spacecraft.moveLaterally(1);
+    }
+
+    if (keyStates[UP_ARROW])
+    {
+        this->spacecraft.moveVertically(1);
+    }
+
+    if (keyStates[DOWN_ARROW])
+    {
+        this->spacecraft.moveVertically(-1);
     }
 
     if (keyStates[' '])
@@ -256,19 +223,18 @@ void Game::keyOperations()
 // Method to check if the game is over
 void Game::gameover()
 {
-    cout << x_s << ',' << y_s << ',' << x_a << ',' << y_a << endl;
+    // cout << x_s << ',' << y_s << ',' << x_a << ',' << y_a << endl;
     static constexpr float square_size = 50.0;
     float bodyWidth = 40 * square_size;    // Width of the spacecraft body
     float bodyHeight = 20.0 * square_size; // Height of the spacecraft body
     float finWidth = 6.0 * square_size;    // Width of the fins
     float finHeight = 10.0 * square_size;  // Height of the fins
 
-
     int number_x = x_a;                              // Check this number
     int lowerbound_x = x_s - (bodyWidth + finWidth); // Lower bound of x range
     int upperbound_x = x_s + (bodyWidth + finWidth); // Upper bound of x range
 
-    int number_y;                                      // Check this number
+    int number_y = y_a;                                // Check this number
     int lowerbound_y = y_s - (bodyHeight + finHeight); // Lower bound of y range
     int upperbound_y = y_s + (bodyHeight + finHeight); // Upper bound of y range
 
@@ -276,7 +242,7 @@ void Game::gameover()
     {
         if (number_y >= lowerbound_y && number_y <= upperbound_y)
         {
-            cout << "Game Over: Number is between the bounds." << endl;
+            // cout << "Game Over: Number is between the bounds." << endl;
             over = true;
             return;
         }
@@ -327,19 +293,19 @@ void Game::resultsdisplay()
     else
     {
         // Display Message when the Game is Lost
-        const char *title = "*************************";
-        glRasterPos2f(230, 250);
+        const char *title = "******************************************";
+        glRasterPos2f(140, 250);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "SORRY, YOU LOST THE GAME SPACECRAFT";
         glColor3f(1, 1, 1);
-        glRasterPos2f(210, 300);
+        glRasterPos2f(140, 300);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
-        title = "*************************";
-        glRasterPos2f(230, 350);
+        title = "******************************************";
+        glRasterPos2f(140, 350);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
@@ -347,22 +313,30 @@ void Game::resultsdisplay()
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "In order to restart the game, press the letter r on the keyboard.";
-        glRasterPos2f(170, 550);
+        glRasterPos2f(120, 550);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
     }
 
-    glFlush();
+    // glFlush();
 }
 
 // instructions screen messages
 void Game::Instructionscreen()
 {
     glClearColor(0, 1.0, 1.0, 1.0); // make the screen a cyan color
-    glClear(GL_COLOR_BUFFER_BIT);
+    // glClear(GL_COLOR_BUFFER_BIT);
+    glBegin(GL_LINES);
+    for (int i = 0; i < 180; i++)
+    {
+        float x = 30 * cos(i) - 375;
+        float y = 30 * sin(i) - 375;
+        glVertex2f(x, y);
+    }
+    glEnd();
 
     // Set text color to white
-    glColor3f(1.0, 1.0, 1.0);
+    glColor3f(0.0, 0.0, 0.0);
 
     // Title Section
     const char *title = "*************************************";
@@ -371,7 +345,7 @@ void Game::Instructionscreen()
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
     title = "Asteroid Avoider";
-    glRasterPos2f(240, 550);
+    glRasterPos2f(270, 550);
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
@@ -382,12 +356,12 @@ void Game::Instructionscreen()
 
     // Instruction Text Section
     title = "To move the spacecraft, use the left and right arrow keys";
-    glRasterPos2f(150, 450);
+    glRasterPos2f(100, 450);
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
     title = "Press the space key to begin!";
-    glRasterPos2f(200, 400);
+    glRasterPos2f(210, 400);
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
@@ -396,7 +370,7 @@ void Game::Instructionscreen()
     while (*title)
         glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
-    glFlush();
+    // glFlush();
 }
 
 void Game::display()
@@ -411,6 +385,20 @@ void Game::display()
     glClear(GL_COLOR_BUFFER_BIT);
     this->gameover();
 
+    updateAsteroids();
+    for (auto asteroid : asteroids)
+    {
+        asteroid.draw();
+    }
+    this->spacecraft.draw();
+
+    std::this_thread::sleep_for(std::chrono::milliseconds(5));
+
+    // sleep()
+
+    // updateAsteroids(0);
+    // renderAsteroids();
+
     // If the player is replaying then draw the asteroid and spacecraft again
     if (this->replay)
     {
@@ -418,7 +406,7 @@ void Game::display()
         {
 
             this->spacecraft.draw(1.5 + this->xincrements, 1.5 + this->yincrements);
-            this->asteroid.draw(1.5 + this->xincrementa, 1.5 + this->yincrementa);
+            // this->asteroid.draw(1.5 + this->xincrementa, 1.5 + this->yincrementa);
         }
         else
         {
@@ -428,7 +416,7 @@ void Game::display()
     else
     {
         this->Instructionscreen();
-    }
+        }
     glutSwapBuffers();
 }
 
@@ -454,13 +442,11 @@ void Game::reshape(int w_resize, int h_resize)
 
 // unique pointer for Spacecraft object
 std::unique_ptr<Spacecraft> spacecraftPtr(new Spacecraft);
-std::unique_ptr<Spacecraft> asteroidPtr(new Asteroid);
 
-Game game(*spacecraftPtr,*asteroidPtr);
+Game game(*spacecraftPtr);
 
-
-void displaycallback() {game.display();}
-void reshapecallback(int width, int height) {game.reshape(width,height);}
+void displaycallback() { game.display(); }
+void reshapecallback(int width, int height) { game.reshape(width, height); }
 
 void keypressedcallback(unsigned char key, int x, int y)
 {
@@ -475,67 +461,84 @@ void specialKeyPressedCallback(int key, int x, int y)
     switch (key)
     {
     case GLUT_KEY_LEFT:
-        //Game::getGame()->keyStates[LEFT_ARROW] = true;
+        // Game::getGame()->keyStates[LEFT_ARROW] = true;
         game.keyStates[LEFT_ARROW] = true;
         break;
 
     case GLUT_KEY_RIGHT:
-        //Game::getGame()->keyStates[RIGHT_ARROW] = true;
+        // Game::getGame()->keyStates[RIGHT_ARROW] = true;
         game.keyStates[RIGHT_ARROW] = true;
+        break;
+    case GLUT_KEY_UP:
+        game.keyStates[UP_ARROW] = true;
+        break;
+    case GLUT_KEY_DOWN:
+        game.keyStates[DOWN_ARROW] = true;
         break;
     }
 }
 
 void specialkeyupcallback(int key, int x, int y)
 {
-    switch(key)
+    switch (key)
     {
-        case GLUT_KEY_LEFT:
-        //Game::getGame()->keyStates[LEFT_ARROW] = false;
+    case GLUT_KEY_LEFT:
+        // Game::getGame()->keyStates[LEFT_ARROW] = false;
         game.keyStates[LEFT_ARROW] = false;
         break;
 
     case GLUT_KEY_RIGHT:
-         game.keyStates[RIGHT_ARROW] = false;
-        //Game::getGame()->keyStates[RIGHT_ARROW] = false;
+        game.keyStates[RIGHT_ARROW] = false;
+        // Game::getGame()->keyStates[RIGHT_ARROW] = false;
+        break;
+    case GLUT_KEY_UP:
+        game.keyStates[UP_ARROW] = false;
+        break;
+    case GLUT_KEY_DOWN:
+        game.keyStates[DOWN_ARROW] = false;
         break;
     }
 }
 
 int main(int argc, char **argv)
 {
+
+    ErrorLog logger;
+    logger.WriteMessage("Something went wrong!"); // link the error log
+
     glutInit(&argc, argv);                       // Initialize GLUT
     glutInitDisplayMode(GLUT_DOUBLE | GLUT_RGB); // Double buffering for smooth rendering
     glutInitWindowSize(750, 750);                // Set the window size
-    glutCreateWindow("Asteroids Avoiders");    // Create the window
-
+    glutCreateWindow("Asteroids Avoiders");      // Create the window
+    glewInit();
     // Set up OpenGL settings
     glClearColor(0.0, 0.0, 0.0, 1.0);                      // Set background color (black)
     glOrtho(0, window_width, 0, window_height, -1.0, 1.0); // Set 2D orthogonal projection
 
     // Register the display function and handle input
-    
-    //glutDisplayFunc(display);           // Display callback for rendering
-    //glutKeyboardFunc(keyPressed);       // Regular key press callback
-    //glutSpecialFunc(specialkeypressed); // Special key press callback
-    //glutTimerFunc(16, update, 0);       // Start the update loop (60 FPS)
-    
-     // Set GLUT callbacks
-     
+
+    // glutDisplayFunc(display);           // Display callback for rendering
+    // glutKeyboardFunc(keyPressed);       // Regular key press callback
+    // glutSpecialFunc(specialkeypressed); // Special key press callback
+    // glutTimerFunc(16, update, 0);       // Start the update loop (60 FPS)
+
+    // Set GLUT callbacks
     glutKeyboardFunc(keypressedcallback);
     glutKeyboardUpFunc(keyUpCallback);
     glutDisplayFunc(displaycallback);
-    glutReshapeFunc(reshapecallback);
+    // glutReshapeFunc(reshapecallback);
     glutIdleFunc(displaycallback);
     glutSpecialFunc(specialKeyPressedCallback);
     glutSpecialUpFunc(specialkeyupcallback);
 
     // Spawn the first asteroid
-    spawnAsteroid();
+    //  spawnAsteroid();
 
     // Initialize game
-    game.init(); 
-    // Enter the GLUT main loop
+    game.init();
+
+    // glutTimerFunc(20, updateAsteroids, 0); // Update asteroids every 20 ms
+    //  Enter the GLUT main loop
     glutMainLoop();
 
     return 0;
