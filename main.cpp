@@ -108,7 +108,7 @@ void Spacecraft::draw(float posX, float posY)
 }
 
 // Game
-Game::Game(Spacecraft &s) : spacecraft(s), replay(false), over(true), square_size(50.0), xincrements(1.5), yincrements(0), xincrementa(0), yincrementa(0)
+Game::Game(Spacecraft &s) : spacecraft(s), replay(false), over(true), square_size(10.0), xincrements(1.5), yincrements(0)
 {
     // set spacecraft
     // add asteroid
@@ -158,9 +158,7 @@ void Game::resetGame()
 
     // reset increments back to original state
     xincrements = 1.5;
-    yincrements = 0;
-    xincrementa = 0;
-    yincrementa = 0;
+    yincrements = 1.5;
 
     // Reset keys back to original state
     for (int i = 0; i < 256; i++)
@@ -190,11 +188,13 @@ void Game::keyOperations()
 
     if (keyStates[UP_ARROW])
     {
+        yincrements += 1.5;
         this->spacecraft.moveVertically(1);
     }
 
     if (keyStates[DOWN_ARROW])
     {
+        yincrements -= 1.5;
         this->spacecraft.moveVertically(-1);
     }
 
@@ -223,20 +223,23 @@ void Game::keyOperations()
 // Method to check if the game is over
 void Game::gameover()
 {
-    // cout << x_s << ',' << y_s << ',' << x_a << ',' << y_a << endl;
-    static constexpr float square_size = 50.0;
-    float bodyWidth = 40 * square_size;    // Width of the spacecraft body
-    float bodyHeight = 20.0 * square_size; // Height of the spacecraft body
-    float finWidth = 6.0 * square_size;    // Width of the fins
-    float finHeight = 10.0 * square_size;  // Height of the fins
+    for(auto &asteroid : asteroids)
+    {
+    cout << x_s << ',' << y_s << endl;
+    //cout << asteroid.x << ',' << asteroid.y << endl;
+    static constexpr float square_size = 10.0;
+    float bodyWidth = 4 * square_size;    // Width of the spacecraft body
+    float bodyHeight = 12.0 * square_size; // Height of the spacecraft body
+    float finWidth = 8.0 * square_size;   // Width of the fins
+    float finHeight = 4.0 * square_size;  // Height of the fins
 
-    int number_x = x_a;                              // Check this number
-    int lowerbound_x = x_s - (bodyWidth + finWidth); // Lower bound of x range
-    int upperbound_x = x_s + (bodyWidth + finWidth); // Upper bound of x range
+    int number_x = asteroid.x;                              // Check this number
+    int lowerbound_x = (x_s/10) - (0.5*(bodyWidth + finWidth)); // Lower bound of x range
+    int upperbound_x = (x_s/10) + (0.5*(bodyWidth + finWidth)); // Upper bound of x range
 
-    int number_y = y_a;                                // Check this number
-    int lowerbound_y = y_s - (bodyHeight + finHeight); // Lower bound of y range
-    int upperbound_y = y_s + (bodyHeight + finHeight); // Upper bound of y range
+    int number_y = asteroid.y;                                // Check this number
+    int lowerbound_y = (y_s/10) - (0.5*(bodyHeight + finHeight)); // Lower bound of y range
+    int upperbound_y = (y_s/10) + (0.5*(bodyHeight + finHeight)); // Upper bound of y range
 
     if (number_x >= lowerbound_x && number_x <= upperbound_x)
     {
@@ -247,9 +250,6 @@ void Game::gameover()
             return;
         }
     }
-    else
-    {
-        cout << "Game continues: Number outside the bounds." << endl;
     }
 
     if (time_interval == 60) // Allow game to go on for a minute
@@ -375,11 +375,6 @@ void Game::Instructionscreen()
 
 void Game::display()
 {
-    // if the game starts with 1 second, set over to false
-    if (this->time_interval == 1)
-    {
-        this->over = false;
-    }
 
     this->keyOperations();
     glClear(GL_COLOR_BUFFER_BIT);
@@ -390,23 +385,16 @@ void Game::display()
     {
         asteroid.draw();
     }
-    this->spacecraft.draw();
+    // this->spacecraft.draw();
 
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
-
-    // sleep()
-
-    // updateAsteroids(0);
-    // renderAsteroids();
 
     // If the player is replaying then draw the asteroid and spacecraft again
     if (this->replay)
     {
         if (!this->over)
         {
-
             this->spacecraft.draw(1.5 + this->xincrements, 1.5 + this->yincrements);
-            // this->asteroid.draw(1.5 + this->xincrementa, 1.5 + this->yincrementa);
         }
         else
         {
@@ -450,23 +438,20 @@ void reshapecallback(int width, int height) { game.reshape(width, height); }
 
 void keypressedcallback(unsigned char key, int x, int y)
 {
-    std::cout << "Pressed key: " << static_cast<int>(key) << std::endl;
     game.keyStates[key] = true;
 }
 
 void keyUpCallback(unsigned char key, int x, int y) { game.keyStates[key] = false; }
-//{ Game::getGame()->keyStates[key] = false; }
+
 void specialKeyPressedCallback(int key, int x, int y)
 {
     switch (key)
     {
     case GLUT_KEY_LEFT:
-        // Game::getGame()->keyStates[LEFT_ARROW] = true;
         game.keyStates[LEFT_ARROW] = true;
         break;
 
     case GLUT_KEY_RIGHT:
-        // Game::getGame()->keyStates[RIGHT_ARROW] = true;
         game.keyStates[RIGHT_ARROW] = true;
         break;
     case GLUT_KEY_UP:
@@ -483,13 +468,11 @@ void specialkeyupcallback(int key, int x, int y)
     switch (key)
     {
     case GLUT_KEY_LEFT:
-        // Game::getGame()->keyStates[LEFT_ARROW] = false;
         game.keyStates[LEFT_ARROW] = false;
         break;
 
     case GLUT_KEY_RIGHT:
         game.keyStates[RIGHT_ARROW] = false;
-        // Game::getGame()->keyStates[RIGHT_ARROW] = false;
         break;
     case GLUT_KEY_UP:
         game.keyStates[UP_ARROW] = false;
