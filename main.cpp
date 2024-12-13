@@ -26,6 +26,7 @@
 #include <cmath>
 #include <chrono>
 
+
 #define LEFT_ARROW 37
 #define RIGHT_ARROW 39
 #define UP_ARROW 41
@@ -257,17 +258,17 @@ void Game::gameover()
         over = true;
         return;
     }
+
 }
 
 // Display the results of the game at the end
 void Game::resultsdisplay()
 {
-    // Clear the screen by showing a black screen
-    glClearColor(0, 0, 0, 1.0);
     glClear(GL_COLOR_BUFFER_BIT);
 
     if (time_interval == 60)
     {
+        glClearColor(0, 0, 0, 1.0);
         // Display Message when the Game is Won
         const char *title = "*************************************";
         glRasterPos2f(170, 250);
@@ -275,7 +276,7 @@ void Game::resultsdisplay()
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "CONGRATULATIONS YOU WON SPACECRAFT! ";
-        glColor3f(1, 1, 1);
+        glColor3f(0.0, 0.0, 0.0);
         glRasterPos2f(150, 300);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
@@ -290,8 +291,11 @@ void Game::resultsdisplay()
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
     }
+    
+    
     else
     {
+        glColor3f(0.0, 0.0, 0.0);
         // Display Message when the Game is Lost
         const char *title = "******************************************";
         glRasterPos2f(140, 250);
@@ -299,7 +303,6 @@ void Game::resultsdisplay()
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "SORRY, YOU LOST THE GAME SPACECRAFT";
-        glColor3f(1, 1, 1);
         glRasterPos2f(140, 300);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
@@ -315,9 +318,8 @@ void Game::resultsdisplay()
         title = "In order to restart the game, press the letter r on the keyboard.";
         glRasterPos2f(120, 550);
         while (*title)
-            glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
+            glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
     }
-
     // glFlush();
 }
 
@@ -325,7 +327,7 @@ void Game::resultsdisplay()
 void Game::Instructionscreen()
 {
     glClearColor(0, 1.0, 1.0, 1.0); // make the screen a cyan color
-    // glClear(GL_COLOR_BUFFER_BIT);
+    glClear(GL_COLOR_BUFFER_BIT);
     glBegin(GL_LINES);
     for (int i = 0; i < 180; i++)
     {
@@ -335,7 +337,7 @@ void Game::Instructionscreen()
     }
     glEnd();
 
-    // Set text color to white
+    // Set text color to black
     glColor3f(0.0, 0.0, 0.0);
 
     // Title Section
@@ -380,12 +382,13 @@ void Game::display()
     glClear(GL_COLOR_BUFFER_BIT);
     this->gameover();
 
+   
     updateAsteroids();
     for (auto asteroid : asteroids)
     {
         asteroid.draw();
     }
-    // this->spacecraft.draw();
+      
 
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
