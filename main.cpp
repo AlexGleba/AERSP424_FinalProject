@@ -238,9 +238,9 @@ void Game::gameover()
         //cout << x_s << ',' << y_s << endl;
         // cout << asteroid.x << ',' << asteroid.y << endl;
         static constexpr float square_size = 10.0;
-        float bodyWidth = 1 * square_size;     // Width of the spacecraft body
+        float bodyWidth = 3 * square_size;     // Width of the spacecraft body
         float bodyHeight = 12.0 * square_size; // Height of the spacecraft body
-        float finWidth = 2.0 * square_size;    // Width of the fins
+        float finWidth = 6.0 * square_size;    // Width of the fins
         float finHeight = 4.0 * square_size;   // Height of the fins
 
         int number_x = asteroid.x;                                      // Check this number
