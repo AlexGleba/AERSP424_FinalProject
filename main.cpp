@@ -26,7 +26,6 @@
 #include <cmath>
 #include <chrono>
 
-
 #define LEFT_ARROW 37
 #define RIGHT_ARROW 39
 #define UP_ARROW 41
@@ -59,10 +58,10 @@ void Spacecraft::draw()
 void Spacecraft::draw(float posX, float posY)
 {
     // Draw the Spacecraft
-    float bodyWidth = 4 * square_size;    // Width of the spacecraft body
+    float bodyWidth = 4 * square_size;     // Width of the spacecraft body
     float bodyHeight = 12.0 * square_size; // Height of the spacecraft body
-    float finWidth = 8.0 * square_size;   // Width of the fins
-    float finHeight = 4.0 * square_size;  // Height of the fins
+    float finWidth = 8.0 * square_size;    // Width of the fins
+    float finHeight = 4.0 * square_size;   // Height of the fins
 
     // Draw main body of Spacecraft through use of ellipse
     glColor3f(1.0, 0.0, 0.0);
@@ -78,8 +77,8 @@ void Spacecraft::draw(float posX, float posY)
 
     // Draw cockpit as small circle at the top of the Spacecraft
     float axis1 = 1.0 * square_size;
-    float axis2 = 2.0*  square_size;
-    glColor3f(1.0,1.0,1.0);
+    float axis2 = 2.0 * square_size;
+    glColor3f(1.0, 1.0, 1.0);
     glBegin(GL_POLYGON); // Begin drawing the cockpit
     for (int i = 0; i < 360; i++)
     {
@@ -105,6 +104,15 @@ void Spacecraft::draw(float posX, float posY)
     glVertex2f(posX + bodyWidth * 0.25, posY - bodyHeight * 0.5); // Bottom left
     glVertex2f(posX + bodyWidth * 0.5, posY - bodyHeight * 0.75); // Bottom left point of the fin
     glVertex2f(posX + bodyWidth * 0.75, posY - bodyHeight * 0.5); // Bottom right
+    glEnd();
+
+    // draw the fire
+    glColor3f(1.0, 0.647, 0.0); // Orange color
+    glBegin(GL_TRIANGLES);
+    // Bottom of the new fin (horizontal alignment between the two other fins)
+    glVertex2f(posX - bodyWidth*0.25, posY - bodyHeight * 0.5); 
+    glVertex2f(posX, posY - bodyHeight * 0.75); 
+    glVertex2f(posX + bodyWidth * 0.25, posY - bodyHeight * 0.5); 
     glEnd();
 }
 
@@ -224,33 +232,34 @@ void Game::keyOperations()
 // Method to check if the game is over
 void Game::gameover()
 {
-    for(auto &asteroid : asteroids)
+    for (auto &asteroid : asteroids)
     {
-    cout << x_s << ',' << y_s << endl;
-    //cout << asteroid.x << ',' << asteroid.y << endl;
-    static constexpr float square_size = 10.0;
-    float bodyWidth = 4 * square_size;    // Width of the spacecraft body
-    float bodyHeight = 12.0 * square_size; // Height of the spacecraft body
-    float finWidth = 8.0 * square_size;   // Width of the fins
-    float finHeight = 4.0 * square_size;  // Height of the fins
+        // print statement to debug 
+        //cout << x_s << ',' << y_s << endl;
+        // cout << asteroid.x << ',' << asteroid.y << endl;
+        static constexpr float square_size = 10.0;
+        float bodyWidth = 1 * square_size;     // Width of the spacecraft body
+        float bodyHeight = 12.0 * square_size; // Height of the spacecraft body
+        float finWidth = 2.0 * square_size;    // Width of the fins
+        float finHeight = 4.0 * square_size;   // Height of the fins
 
-    int number_x = asteroid.x;                              // Check this number
-    int lowerbound_x = (x_s/10) - (0.5*(bodyWidth + finWidth)); // Lower bound of x range
-    int upperbound_x = (x_s/10) + (0.5*(bodyWidth + finWidth)); // Upper bound of x range
+        int number_x = asteroid.x;                                      // Check this number
+        int lowerbound_x = (x_s / 10) - (0.5 * (bodyWidth + finWidth)); // Lower bound of x range
+        int upperbound_x = (x_s / 10) + (0.5 * (bodyWidth + finWidth)); // Upper bound of x range
 
-    int number_y = asteroid.y;                                // Check this number
-    int lowerbound_y = (y_s/10) - (0.5*(bodyHeight + finHeight)); // Lower bound of y range
-    int upperbound_y = (y_s/10) + (0.5*(bodyHeight + finHeight)); // Upper bound of y range
+        int number_y = asteroid.y;                                        // Check this number
+        int lowerbound_y = (y_s / 10) - (0.5 * (bodyHeight + finHeight)); // Lower bound of y range
+        int upperbound_y = (y_s / 10) + (0.5 * (bodyHeight + finHeight)); // Upper bound of y range
 
-    if (number_x >= lowerbound_x && number_x <= upperbound_x)
-    {
-        if (number_y >= lowerbound_y && number_y <= upperbound_y)
+        if (number_x >= lowerbound_x && number_x <= upperbound_x)
         {
-            // cout << "Game Over: Number is between the bounds." << endl;
-            over = true;
-            return;
+            if (number_y >= lowerbound_y && number_y <= upperbound_y)
+            {
+                // cout << "Game Over: Number is between the bounds." << endl;
+                over = true;
+                return;
+            }
         }
-    }
     }
 
     if (time_interval == 60) // Allow game to go on for a minute
@@ -258,16 +267,17 @@ void Game::gameover()
         over = true;
         return;
     }
-
 }
 
 // Display the results of the game at the end
 void Game::resultsdisplay()
 {
+    // clear the previous screen
     glClear(GL_COLOR_BUFFER_BIT);
 
     if (time_interval == 60)
     {
+        // set overall color
         glClearColor(0, 0, 0, 1.0);
         // Display Message when the Game is Won
         const char *title = "*************************************";
@@ -291,24 +301,24 @@ void Game::resultsdisplay()
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_HELVETICA_18, *title++);
     }
-    
-    
+
     else
     {
+        // set the overall color
         glColor3f(0.0, 0.0, 0.0);
         // Display Message when the Game is Lost
         const char *title = "******************************************";
-        glRasterPos2f(140, 250);
+        glRasterPos2f(130, 250);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "SORRY, YOU LOST THE GAME SPACECRAFT";
-        glRasterPos2f(140, 300);
+        glRasterPos2f(130, 300);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "******************************************";
-        glRasterPos2f(140, 350);
+        glRasterPos2f(130, 350);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
@@ -316,7 +326,7 @@ void Game::resultsdisplay()
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
 
         title = "In order to restart the game, press the letter r on the keyboard.";
-        glRasterPos2f(120, 550);
+        glRasterPos2f(90, 550);
         while (*title)
             glutBitmapCharacter(GLUT_BITMAP_TIMES_ROMAN_24, *title++);
     }
@@ -382,13 +392,11 @@ void Game::display()
     glClear(GL_COLOR_BUFFER_BIT);
     this->gameover();
 
-   
     updateAsteroids();
     for (auto asteroid : asteroids)
     {
         asteroid.draw();
     }
-      
 
     std::this_thread::sleep_for(std::chrono::milliseconds(5));
 
@@ -407,7 +415,7 @@ void Game::display()
     else
     {
         this->Instructionscreen();
-        }
+    }
     glutSwapBuffers();
 }
 
