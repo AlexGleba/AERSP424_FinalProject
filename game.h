@@ -1,3 +1,4 @@
+// include headers
 #ifndef GAME_H
 #define GAME_H
 #include <vector>
@@ -14,60 +15,49 @@ class Spacecraft;
 class Asteroid;
 class DrawObjects;
 
+// create the game class
 class Game
 {
+    // private members
 private:
-    // static Game * instancePtr;
-    //  Game(){};
-
     Spacecraft &spacecraft;
-    std::vector<Asteroid> asteroids;
-    bool replay;
-    bool over;
-    float square_size;
-    float xincrements;
-    float yincrements;
-    float xincrementa;
-    float yincrementa;
-    std::vector<std::vector<bool>> bitmap1;
-    int time_interval = 0;
-    std::vector<DrawObjects *> drawobjects;
-    bool moveLeft;
-    bool moveRight;
-    float x_s;
-    float y_s;
-    float x_a;
-    float y_a;
-    // std::vector<float> asteroid positions; (not sure if needed)
+    std::vector<Asteroid> asteroids;        // vector to store asteroids
+    bool replay;                            // used to determine if game is replaying
+    bool over = false;                      // used to determine if the game is over
+    float square_size;                      // square size of the game
+    float xincrements;                      // increment of x for the spacecraft
+    float yincrements;                      // increment of y for the spacecraft
+    float xincrementa;                      // increment of x for the asteroids
+    float yincrementa;                      // increment of y for the asteroids
+    std::vector<std::vector<bool>> bitmap1; // bitmap for storing game state
+    int time_interval = 0;                  // time interval of the game
+    std::vector<DrawObjects *> drawobjects; // vector of drawable objects
+    bool moveLeft;                          // determine whether the spacecraft moves left
+    bool moveRight;                         // determine whether the spacecraft moves right
+    float x_s;                              // x position of the spacecraft
+    float y_s;                              // y position of the spacecraft
 
 public:
-    // Game(const Game &obj) = delete;
-    //  static Game *getGame()
-    //  {
-    //      return instancePtr;
-    //  }
-
-    // List of the asteroids
-    // Spacecraft spacecraft;
-    // void set(Spacecraft& s);
-    // void add(Asteroid& a);
-    const int window_width = 750;
-    const int window_height = 750;
-    Game(Spacecraft &s);
+    // public members
+    const int window_width = 750;  // define window width
+    const int window_height = 750; // define window height
+    Game(Spacecraft &s);           // game constructor
 
     // initialize the game and spawn the first asteroid
     void initialize()
     {
+        // store the asteroids
         asteroids.push_back(Asteroid(rand() % window_width, window_height, 20, 1.5));
     }
 
+    // update the positions of the asteroids
     void updateAsteroids()
     {
         for (auto &asteroid : asteroids)
         {
-            // asteroid.updateAsteroidspeed(); // moves each asteroid down the screen
-            asteroid.y -= asteroid.speed;
-            if (asteroid.y < 0) // if asteroid off the screen
+
+            asteroid.y -= asteroid.speed; // moves asteroids down the screen
+            if (asteroid.y < 0)           // if asteroid off the screen
             {
                 asteroid.y = window_height;         // resets the asteroid to the top of the screen
                 asteroid.x = rand() % window_width; // randomly select a x-position to reset the asteroid
@@ -76,25 +66,23 @@ public:
 
         // Spawn new asteroids
         float probability = 100 * (float)rand() / RAND_MAX;
-        if (probability < 1) // spawn frequency
+        if (probability < 0.1) // spawn frequency (increases speed proportionally)
         {
+            // store the asteroids
             asteroids.push_back(Asteroid(rand() % window_width, window_height, 20, 1.5));
         }
     }
 
-    void init();
-    virtual ~Game();
-    void keyPressed(unsigned char key, int x, int y);
-    void keyUp(unsigned char key, int x, int y);
-    void resetGame();
-    void keyOperations();
-    void gameover();
-    void resultsdisplay();
-    void Instructionscreen();
-    void display();
-    void reshape(int width, int height);
-
-    std::vector<bool> keyStates;
+    virtual ~Game();                     // destructor
+    void init();                         // initialize the game
+    void gameover();                     // handle game over circumstance
+    void resetGame();                    // handle game reset circumstance
+    void keyOperations();                // handle key operations
+    void resultsdisplay();               // handle displaying results
+    void Instructionscreen();            // display instruction screen
+    void display();                      // display the game
+    void reshape(int width, int height); // handle reshaping circumstance
+    std::vector<bool> keyStates;         // vector for storing the state of the keys
 };
-// Game *Game::instancePtr = new Game();
+
 #endif // GAME_H

@@ -2,8 +2,8 @@
  
 cmake_minimum_required(VERSION 3.22) # Specify CMake version.
 
-project(FinalProject
-   )     # Define project name
+project(FinalProject # Define project name
+   )     
 
 set(CMAKE_CXX_STANDARD 17) # Specify C++ version.
 set(CMAKE_CXX_FLAGS "${CMAKE_C_FLAGS} -Wall")  
